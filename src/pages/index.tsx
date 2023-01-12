@@ -1,9 +1,11 @@
-import { type NextPage } from "next";
+import type { GetServerSidePropsContext, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { signIn, signOut, useSession } from "next-auth/react";
 
 import { api } from "../utils/api";
+import { getServerAuthSession } from "../server/auth";
+import Image from "next/image";
 
 const Home: NextPage = () => {
   const hello = api.example.hello.useQuery({ text: "from tRPC" });
@@ -63,13 +65,23 @@ const AuthShowcase: React.FC = () => {
 
   const { data: secretMessage } = api.example.getSecretMessage.useQuery(
     undefined, // no input
-    { enabled: sessionData?.user !== undefined },
+    { enabled: sessionData?.user !== undefined }
   );
 
   return (
     <div className="flex flex-col items-center justify-center gap-4">
       <p className="text-center text-2xl text-white">
         {sessionData && <span>Logged in as {sessionData.user?.name}</span>}
+        {sessionData && (
+          <div className="relative h-12 w-12">
+            <Image
+              src={sessionData.user?.image as string}
+              alt={`${sessionData.user?.name as string} profile picture`}
+              className="rounded-full"
+              fill
+            />
+          </div>
+        )}
         {secretMessage && <span> - {secretMessage}</span>}
       </p>
       <button
@@ -81,3 +93,23 @@ const AuthShowcase: React.FC = () => {
     </div>
   );
 };
+
+export async function getServerSideProps({
+  req,
+  res,
+}: GetServerSidePropsContext) {
+  const session = await getServerAuthSession({ req, res });
+
+  if (!session?.user?.id) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/login",
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
+}
