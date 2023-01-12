@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import {
   Account,
   Prisma,
@@ -7,6 +8,10 @@ import {
 } from "@prisma/client";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
 import { TypeIdentityProvider } from "./constants";
+=======
+import type { Account, Prisma, PrismaClient, User } from "@prisma/client";
+import type { TypeIdentityProvider } from "./constants";
+>>>>>>> learning-jest-cucumber
 
 /** @return { import("next-auth/adapters").Adapter } */
 export default function CustomAdapter(prismaClient: PrismaClient) {
@@ -46,9 +51,13 @@ export default function CustomAdapter(prismaClient: PrismaClient) {
       if (["GOOGLE", "GITHUB"].indexOf(provider) < 0) {
         return null;
       }
+<<<<<<< HEAD
       const obtainProvider =
         provider
       .toUpperCase() as TypeIdentityProvider;
+=======
+      const obtainProvider = provider.toUpperCase() as TypeIdentityProvider;
+>>>>>>> learning-jest-cucumber
       const user = await prismaClient.user.findFirst({
         where: {
           identityProviderId: provider_providerAccountId?.providerAccountId,
