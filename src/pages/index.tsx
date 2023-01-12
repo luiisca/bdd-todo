@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-import { GetServerSidePropsContext, type NextPage } from "next";
-=======
 import type { GetServerSidePropsContext, NextPage } from "next";
->>>>>>> learning-jest-cucumber
 import Head from "next/head";
 import Link from "next/link";
 import { signIn, signOut, useSession } from "next-auth/react";
@@ -80,11 +76,7 @@ const AuthShowcase: React.FC = () => {
           <div className="relative h-12 w-12">
             <Image
               src={sessionData.user?.image as string}
-<<<<<<< HEAD
-              alt={`${sessionData.user?.name} profile picture`}
-=======
               alt={`${sessionData.user?.name as string} profile picture`}
->>>>>>> learning-jest-cucumber
               className="rounded-full"
               fill
             />
