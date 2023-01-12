@@ -1,4 +1,4 @@
-import NextAuth, { Profile, NextAuthOptions} from "next-auth";
+import NextAuth, { Profile, NextAuthOptions } from "next-auth";
 import GitHubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 
@@ -13,20 +13,20 @@ const customAdapter = CustomAdapter(prisma);
 export const authOptions: NextAuthOptions = {
   // Include user.id on session
   callbacks: {
-    async session({ session, user }) {
-      console.log("SESSION CALLBACK", session, user)
+    session({ session, user }) {
+      // console.log("SESSION CALLBACK", session, user);
       if (session.user) {
         session.user.id = user.id;
       }
       return session;
     },
     async signIn(params) {
-      console.log("SIGNIN CALLBACK");
+      // console.log("SIGNIN CALLBACK");
       const { user, account } = params;
       const profile = params.profile as Profile & { email_verified: Date };
-      console.log("SIGNIN account", account);
-      console.log("SIGNIN user", user);
-      console.log("SIGNIN profile", profile);
+      // console.log("SIGNIN account", account);
+      // console.log("SIGNIN user", user);
+      // console.log("SIGNIN profile", profile);
 
       if (account?.type !== "oauth" || !user.email || !user.name) {
         return false;
@@ -125,12 +125,11 @@ export const authOptions: NextAuthOptions = {
             email: user.email,
             image: user.image,
             identityProvider: idP,
-            identityProviderId: user.id as string,
+            identityProviderId: user.id,
           },
         });
-        console.log("SIGNIN CALLBACK: New user created", newUser);
+        // console.log("SIGNIN CALLBACK: New user created", newUser);
         const linkAccountNewUserData = { ...account, userId: newUser.id };
-        console.log('linkAccountNewUserData', linkAccountNewUserData)
         await customAdapter.linkAccount(linkAccountNewUserData);
 
         return true;
@@ -140,7 +139,7 @@ export const authOptions: NextAuthOptions = {
     },
   },
   pages: {
-    signIn: '/login'
+    signIn: "/login",
   },
   // Configure one or more authentication providers
   adapter: customAdapter as unknown as Adapter,

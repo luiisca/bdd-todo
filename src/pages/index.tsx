@@ -1,4 +1,4 @@
-import { GetServerSidePropsContext, type NextPage } from "next";
+import type { GetServerSidePropsContext, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { signIn, signOut, useSession } from "next-auth/react";
@@ -76,7 +76,7 @@ const AuthShowcase: React.FC = () => {
           <div className="relative h-12 w-12">
             <Image
               src={sessionData.user?.image as string}
-              alt={`${sessionData.user?.name} profile picture`}
+              alt={`${sessionData.user?.name as string} profile picture`}
               className="rounded-full"
               fill
             />

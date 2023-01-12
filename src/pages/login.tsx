@@ -1,15 +1,18 @@
-import { GetServerSidePropsContext } from "next";
+import type { GetServerSidePropsContext } from "next";
 import { signIn } from "next-auth/react";
+import Image from "next/image";
 import { FaGoogle, FaGithub } from "react-icons/fa";
 import { getServerAuthSession } from "../server/auth";
 
 export default function Login() {
   return (
     <div className="flex min-h-screen flex-col justify-center bg-[#f3f4f6] py-12 sm:px-6 lg:px-8">
-      <img
-        className="mx-auto mb-auto w-[100px]"
+      <Image
+        className="mx-auto mb-auto"
         src="/logo.png"
         alt="Bdd Todo Logo"
+        width={100}
+        height={100}
       />
       <div className="text-center sm:mx-auto sm:w-full sm:max-w-md">
         <h2 className="text-neutral-900 text-center font-cal text-3xl">
