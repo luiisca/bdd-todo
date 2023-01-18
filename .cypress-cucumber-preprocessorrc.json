@@ -1,0 +1,6 @@
+{
+  "stepDefinitions": [
+    "cypress/integration/**/[filepath].ts",
+    "cypress/integration/common-step-definitions/*.ts"
+  ]
+}

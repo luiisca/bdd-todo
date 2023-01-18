@@ -10,6 +10,8 @@
     "start": "next start"
   },
   "dependencies": {
+    "@badeball/cypress-cucumber-preprocessor": "^15.1.1",
+    "@bahmutov/cypress-esbuild-preprocessor": "^2.1.5",
     "@next-auth/prisma-adapter": "^1.0.5",
     "@prisma/client": "^4.8.0",
     "@tailwindcss/typography": "^0.5.9",
@@ -36,6 +38,8 @@
     "@typescript-eslint/eslint-plugin": "^5.47.1",
     "@typescript-eslint/parser": "^5.47.1",
     "autoprefixer": "^10.4.7",
+    "cypress": "^12.3.0",
+    "cypress-cucumber-preprocessor": "^4.3.1",
     "eslint": "^8.30.0",
     "eslint-config-next": "13.1.1",
     "postcss": "^8.4.14",

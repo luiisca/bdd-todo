@@ -41,7 +41,10 @@ const Home: NextPage = () => {
         <meta name="description" content="todo example app demonstrating BDD" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="flex h-screen overflow-hidden">
+      <div
+        className="flex h-screen overflow-hidden"
+        data-test-id="authenticated"
+      >
         <SideBarContainer />
         <div className="flex w-0 flex-1 flex-col overflow-hidden">
           <MainContainer

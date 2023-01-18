@@ -15,16 +15,14 @@ export default function Login() {
 
   useEffect(() => {
     if (router.query?.error) {
-      if (
-        router.query?.error === "OAuthCallback" ||
-        router.query?.error === "OAuthAccountNotLinked"
-      ) {
+      if (router.query?.error === "OAuthAccountNotLinked") {
         // TODO: feat: add redirect page for when provider is incorrect
         console.log("UH OH");
         setOAuthError(true);
-        setErrorMessage(
-          "Account registered with another provider. If the problem persists, reset your browser."
-        );
+        setErrorMessage("Account registered with another provider.");
+      } else {
+        setOAuthError(true);
+        setErrorMessage("Something went wrong. Please try again.");
       }
       // Clean URL to clean error query
       router
@@ -57,6 +55,7 @@ export default function Login() {
             <button
               color="secondary"
               className="btn w-full normal-case"
+              data-test-id="google"
               onClick={async (e) => {
                 e.preventDefault();
                 await signIn("google");
@@ -69,6 +68,7 @@ export default function Login() {
           <div className="my-5">
             <button
               className="btn w-full normal-case"
+              data-test-id="github"
               onClick={async (e) => {
                 e.preventDefault();
                 await signIn("github");
