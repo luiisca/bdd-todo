@@ -8,7 +8,7 @@ generator client {
 datasource db {
   provider = "mysql"
   url               = env("DATABASE_URL")
-  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_URL")
   relationMode = "prisma"
 }
 
@@ -49,6 +49,7 @@ model User {
     identityProviderId String?
     accounts      Account[]
     sessions      Session[]
+    tasks Task[]
 }
 
 enum IdentityProvider {
@@ -63,4 +64,15 @@ model VerificationToken {
     expires    DateTime
 
     @@unique([identifier, token])
+}
+
+model Task {
+  id        String  @id @default(uuid())
+  text      String
+  completed Boolean @default(value: false)
+
+  createdAt DateTime @unique @default(now())
+
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

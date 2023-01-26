@@ -26,6 +26,41 @@ type CreateContextOptions = {
   session: Session | null;
 };
 
+async function getUserFromSession({ session }: { session: Maybe<Session> }) {
+  if (!session?.user?.id) {
+    return null;
+  }
+  const user = await prisma.user.findUnique({
+    where: {
+      id: session.user.id,
+    },
+    select: {
+      id: true,
+      // name: true,
+      // email: true,
+      // emailVerified: true,
+      // image: true,
+      // identityProvider: true,
+    },
+  });
+
+  // some hacks to make sure `username` and `email` are never inferred as `null`
+  if (!user) {
+    return null;
+  }
+  // const { email } = user;
+  // if (!email) {
+  //   return null;
+  // }
+  // const image = user.image || defaultAvatarSrc({ email });
+
+  return {
+    ...user,
+    // avatar,
+    // email,
+  };
+}
+
 /**
  * This helper generates the "internals" for a tRPC context. If you need to use
  * it, you can export it from here
@@ -52,10 +87,14 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
 
   // Get the session from the server using the unstable_getServerSession wrapper function
   const session = await getServerAuthSession({ req, res });
+  const contextInner = createInnerTRPCContext({ session });
+  const user = await getUserFromSession({ session });
 
-  return createInnerTRPCContext({
-    session,
-  });
+  return {
+    ...contextInner,
+    prisma,
+    user,
+  };
 };
 
 /**
@@ -64,7 +103,7 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
  * This is where the trpc api is initialized, connecting the context and
  * transformer
  */
-import { initTRPC, TRPCError } from "@trpc/server";
+import { initTRPC, Maybe, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 
 const t = initTRPC.context<typeof createTRPCContext>().create({
@@ -101,13 +140,14 @@ export const publicProcedure = t.procedure;
  * procedure
  */
 const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
-  if (!ctx.session || !ctx.session.user) {
+  if (!ctx.session || !ctx.user) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
   return next({
     ctx: {
       // infers the `session` as non-nullable
-      session: { ...ctx.session, user: ctx.session.user },
+      session: ctx.session,
+      user: ctx.user,
     },
   });
 });

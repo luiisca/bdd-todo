@@ -2,6 +2,8 @@ import { defineConfig } from "cypress";
 import createBundler from "@bahmutov/cypress-esbuild-preprocessor";
 import { addCucumberPreprocessorPlugin } from "@badeball/cypress-cucumber-preprocessor";
 import createEsbuildPlugin from "@badeball/cypress-cucumber-preprocessor/esbuild";
+import { PrismaClient } from "@prisma/client";
+const prisma = new PrismaClient();
 
 export default defineConfig({
   chromeWebSecurity: false,
@@ -24,6 +26,11 @@ export default defineConfig({
           plugins: [createEsbuildPlugin(config)],
         })
       );
+      on("task", {
+        async removeAllTasks() {
+          return await prisma.task.deleteMany();
+        },
+      });
 
       // Make sure to return the config object as it might have been modified by the plugin.
       return config;
