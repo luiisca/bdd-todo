@@ -60,17 +60,35 @@ const Home: NextPage = () => {
   });
 
   const onTaskSubmit = (values: TaskDataType) => {
-    console.log("SUBMITTED", values);
     taskMutation.mutate(values);
   };
 
   // TODO: add optimistic update
   const setCheckedMutation = api.tasks.update.useMutation({
+    onMutate: async ({ position }) => {
+      await utils.tasks.list.cancel();
+
+      const oldTasksList = utils.tasks.list.getData();
+      if (oldTasksList && position !== undefined) {
+        const newList = [...oldTasksList];
+
+        if (newList[position]) {
+          newList[position]!.completed = !newList[position]!.completed;
+        }
+
+        utils.tasks.list.setData(undefined, [...newList]);
+      }
+
+      return { oldTasksList };
+    },
     onSuccess: async () => {
       await utils.tasks.invalidate();
     },
-    onError: async () => {
-      await utils.tasks.invalidate();
+    onError: async (err, _, context) => {
+      if (context?.oldTasksList) {
+        utils.tasks.list.setData(undefined, context.oldTasksList);
+      }
+      console.error(err);
     },
   });
 
@@ -102,7 +120,7 @@ const Home: NextPage = () => {
               className="mb-6 space-y-4 overflow-y-scroll"
               id="tasks-list-test"
             >
-              {tasks?.map((task) => (
+              {tasks?.map((task, id) => (
                 <li
                   className="flex items-center space-x-2 rounded-md border-gray-100 bg-gray-50 px-4 shadow-sm"
                   key={task.id}
@@ -115,6 +133,7 @@ const Home: NextPage = () => {
                       setCheckedMutation.mutate({
                         ...task,
                         completed: !task.completed,
+                        position: id,
                       });
                     }}
                   />

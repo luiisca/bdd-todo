@@ -35,9 +35,12 @@ export const tasksRouter = createTRPCRouter({
     .input(
       taskData.extend({
         id: z.string(),
+        position: z.number().optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
+      delete input.position;
+
       const { prisma, user } = ctx;
 
       await prisma.user.update({
