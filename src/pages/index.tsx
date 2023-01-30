@@ -49,7 +49,28 @@ const Home: NextPage = () => {
   const utils = api.useContext();
 
   const taskMutation = api.tasks.create.useMutation({
-    onMutate: async () => {},
+    onMutate: async ({ text, completed }) => {
+      await utils.tasks.list.cancel();
+
+      const oldTasksList = utils.tasks.list.getData();
+      if (oldTasksList) {
+        const newList = [...oldTasksList];
+
+        if (sessionData?.user?.id)
+          utils.tasks.list.setData(undefined, [
+            {
+              text,
+              completed: Boolean(completed),
+              id: oldTasksList.length + 1,
+              createdAt: new Date(),
+              userId: sessionData.user.id,
+            },
+            ...newList,
+          ]);
+      }
+
+      return { oldTasksList };
+    },
     onSuccess: async () => {
       showToast("Todo succesfully added", "success");
       await utils.tasks.invalidate();
