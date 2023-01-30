@@ -49,6 +49,7 @@ const Home: NextPage = () => {
   const utils = api.useContext();
 
   const taskMutation = api.tasks.create.useMutation({
+    onMutate: async () => {},
     onSuccess: async () => {
       showToast("Todo succesfully added", "success");
       await utils.tasks.invalidate();
@@ -63,7 +64,6 @@ const Home: NextPage = () => {
     taskMutation.mutate(values);
   };
 
-  // TODO: add optimistic update
   const setCheckedMutation = api.tasks.update.useMutation({
     onMutate: async ({ position }) => {
       await utils.tasks.list.cancel();
