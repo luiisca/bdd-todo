@@ -37,7 +37,7 @@ export const tasksRouter = createTRPCRouter({
   update: protectedProcedure
     .input(
       taskData.extend({
-        id: z.string(),
+        id: z.number().positive(),
         position: z.number().optional(),
       })
     )

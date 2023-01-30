@@ -4,6 +4,7 @@ import type { GetServerSidePropsContext, NextPage } from "next";
 import Head from "next/head";
 import { useSession } from "next-auth/react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 
 import { getServerAuthSession } from "../server/auth";
 import { useEffect } from "react";
@@ -45,6 +46,7 @@ const Home: NextPage = () => {
     resolver: zodResolver(taskData),
   });
   const { handleSubmit, register } = taskForm;
+  const [tasksAnimationParentRef] = useAutoAnimate<HTMLUListElement>();
 
   const utils = api.useContext();
 
@@ -138,8 +140,9 @@ const Home: NextPage = () => {
             large
           >
             <ul
-              className="mb-6 space-y-4 overflow-y-scroll"
+              className="mb-6 h-full space-y-4 overflow-y-auto pr-4"
               id="tasks-list-test"
+              ref={tasksAnimationParentRef}
             >
               {tasks?.map((task, id) => (
                 <li
@@ -163,7 +166,6 @@ const Home: NextPage = () => {
                     value={task.text}
                     disabled
                   />
-                  <div>Hey</div>
                 </li>
               ))}
             </ul>
