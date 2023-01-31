@@ -87,6 +87,7 @@ export default function SideBarContainer() {
                   className="hidden justify-between lg:flex"
                   onClick={() => {
                     console.log("adding new to-do");
+                    document.getElementById("input-test")?.focus();
                   }}
                 >
                   <div className="flex">New to-do</div>

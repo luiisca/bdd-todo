@@ -22,10 +22,16 @@ export const tasksRouter = createTRPCRouter({
     .input(taskData)
     .mutation(async ({ ctx, input }) => {
       const { prisma, user } = ctx;
+      const MAX_TEXT_LENGTH = 1000;
 
+      let text = input.text;
+      if (input.text.length > MAX_TEXT_LENGTH) {
+        text = text.slice(0, MAX_TEXT_LENGTH);
+      }
       return await prisma.task.create({
         data: {
           ...input,
+          text,
           user: {
             connect: {
               id: user.id,

@@ -68,7 +68,7 @@ model VerificationToken {
 
 model Task {
   id        Int  @id @default(autoincrement())
-  text      String
+  text      String @db.Text
   completed Boolean @default(value: false)
 
   createdAt DateTime @unique @default(now())

@@ -46,7 +46,7 @@ Cypress.Commands.add("login", () => {
     // We are unsure if this is true and if true, when it needs to be refreshed.
     cy.setCookie(
       "next-auth.session-token",
-      "aff2b5f7-809e-40ad-93cb-ca423a008ed9"
+      "5fe4aa18-a134-466b-a2d5-6d51c627bb4d"
     );
 
     // Visit a route in order to allow cypress to actually set the cookie

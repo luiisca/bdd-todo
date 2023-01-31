@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 
 import { getServerAuthSession } from "../server/auth";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import SideBarContainer from "components/SideBarContainer";
 import MainContainer from "components/MainContainer";
@@ -16,6 +16,8 @@ import { useForm } from "react-hook-form";
 import { taskData, TaskDataType } from "../../prisma/zod-utils";
 import { api } from "utils/api";
 import showToast from "components/ui/core/notification";
+import dayjs from "dayjs";
+import { getDayPeriod } from "utils/parseDate";
 
 const useRedirectToLoginIfUnauthenticated = () => {
   const router = useRouter();
@@ -47,11 +49,16 @@ const Home: NextPage = () => {
   });
   const { handleSubmit, register } = taskForm;
   const [tasksAnimationParentRef] = useAutoAnimate<HTMLUListElement>();
+  const text = useRef();
 
   const utils = api.useContext();
+  useEffect(() => {
+    console.log(text.current);
+  });
 
   const taskMutation = api.tasks.create.useMutation({
     onMutate: async ({ text, completed }) => {
+      taskForm.reset();
       await utils.tasks.list.cancel();
 
       const oldTasksList = utils.tasks.list.getData();
@@ -129,18 +136,18 @@ const Home: NextPage = () => {
         <SideBarContainer />
         <div className="flex w-0 flex-1 flex-col overflow-hidden">
           <MainContainer
-            heading={`Good Morning${
+            heading={`Good ${getDayPeriod()}${
               (sessionData?.user && `, ${sessionData.user.name || "User"}`) ||
               ", User"
             }`}
-            subtitle="Wednesday, Feb 2023"
+            subtitle={dayjs().format("ddd, D MMM YYYY").toString()}
             HeadingLeftIcon={
               <FiCheckSquare className="h-8 w-8 text-blue-400" />
             }
             large
           >
             <ul
-              className="mb-6 h-full space-y-4 overflow-y-auto pr-4"
+              className="mb-6 h-full space-y-4 overflow-y-auto overflow-x-hidden pr-4"
               id="tasks-list-test"
               ref={tasksAnimationParentRef}
             >
@@ -171,6 +178,7 @@ const Home: NextPage = () => {
             </ul>
             <form onSubmit={handleSubmit(onTaskSubmit)} className="space-x-2">
               <input
+                autoFocus
                 placeholder="What is due for today?"
                 className="input-bordered input"
                 id="input-test"

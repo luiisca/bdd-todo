@@ -22,18 +22,19 @@ Then("the new task should be persisted", function () {
 // Adding a task with a name larger than 1000 characters
 Given(
   "I submit a task with a name larger than {int} characters",
-  function (int) {
-    cy.task("removeAllTasks");
+  function (int: number) {
+    // cy.task("removeAllTasks");
 
     cy.log("HEY INT HERE", int);
-    return "pending";
+    AddTaskPage.inputNewTaskTest("a".repeat(int + 1));
+    AddTaskPage.clickSubmitTaskBtn();
   }
 );
 Then(
   "the persisted task's name is not larger than {int} characters",
-  function (int) {
+  function (int: number) {
+    AddTaskPage.tasksList().find(`input[value="${"a".repeat(int)}"]`);
     cy.log("HEY pERSISTED INT HERE", int);
-    return "pending";
   }
 );
 
