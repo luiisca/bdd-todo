@@ -91,6 +91,9 @@ const Home: NextPage = () => {
   });
 
   const onTaskSubmit = (values: TaskDataType) => {
+    if (values.text.replace(/\s/g, "") === "") {
+      return;
+    }
     taskMutation.mutate(values);
   };
 

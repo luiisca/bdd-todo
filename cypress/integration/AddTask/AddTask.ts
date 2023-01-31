@@ -23,9 +23,8 @@ Then("the new task should be persisted", function () {
 Given(
   "I submit a task with a name larger than {int} characters",
   function (int: number) {
-    // cy.task("removeAllTasks");
+    cy.task("removeAllTasks");
 
-    cy.log("HEY INT HERE", int);
     AddTaskPage.inputNewTaskTest("a".repeat(int + 1));
     AddTaskPage.clickSubmitTaskBtn();
   }
@@ -34,15 +33,18 @@ Then(
   "the persisted task's name is not larger than {int} characters",
   function (int: number) {
     AddTaskPage.tasksList().find(`input[value="${"a".repeat(int)}"]`);
-    cy.log("HEY pERSISTED INT HERE", int);
+    cy.task("removeAllTasks");
   }
 );
 
 // Adding a task with empty characters
 Given("I submit a task with no characters", function () {
-  return "pending";
+  cy.task("removeAllTasks");
+
+  AddTaskPage.inputNewTaskTest("a{backspace}");
+  AddTaskPage.clickSubmitTaskBtn();
 });
 
 Then("the task is not persisted", function () {
-  return "pending";
+  AddTaskPage.tasksList().children().should("have.length", 0);
 });

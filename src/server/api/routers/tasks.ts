@@ -1,5 +1,6 @@
 // src/server/api/routers/tasks.ts
 
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { taskData } from "../../../../prisma/zod-utils";
 
@@ -28,6 +29,13 @@ export const tasksRouter = createTRPCRouter({
       if (input.text.length > MAX_TEXT_LENGTH) {
         text = text.slice(0, MAX_TEXT_LENGTH);
       }
+      if (text.replace(/\s/g, "") === "") {
+        throw new TRPCError({
+          code: "PARSE_ERROR",
+          message: "Hey!, It cannot be empty!",
+        });
+      }
+
       return await prisma.task.create({
         data: {
           ...input,
